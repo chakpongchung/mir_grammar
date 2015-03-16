@@ -120,13 +120,45 @@ assignInst
 	}
 	;
 gotoInst
-	: 'goto' jumpLabel
+	: gt='goto' jumpLabel
+	{
+		String statement = "goto " + $jumpLabel.text;
+		int n = $gt.line;
+		writer.writeContent( "Statement: " + statement + " on line " + n );
+	}
 	;
 ifInst
-	: 'if' relExpr ('goto' jumpLabel | 'trap' Integer )
+	: 'if' relExpr (gto='goto' jumpLabel | trp='trap' Integer )
+	{
+		String statement = "if " + $relExpr.text;
+		int n;
+		if( $gto != null ) {
+			statement += " goto ";
+			statement += $jumpLabel.text;
+			n = $gto.line;
+		} else {
+			statement += " trap ";
+			statement += $Integer.text;
+			n = $trp.line;
+		}
+		writer.writeContent( "Statement: " + statement + " on line " + n );
+	}
 	;
 callInst
-	: ('call' | varName '<-') procName ',' argsList
+	: (call='call' | varName asg='<-') procName ',' argsList
+	{
+		String statement = "";
+		int n;
+		if( $call != null ) {
+			statement += "call ";
+			n = $call.line;
+		} else {
+			statement += $varName.text + " <- ";
+			n = $asg.line;
+		}
+		statement += $procName.text + ", " + $argsList.text;
+		writer.writeContent( "Statement: " + statement + " on line " + n );
+	}
 	;
 argsList
 	: '(' argList (';' argList)* ')'
@@ -135,10 +167,21 @@ argList
 	: operand ',' typeName
 	;
 returnInst
-	: 'return' operand?
+	: rt='return' (operand)?
+	{
+		String statement = "return";
+		if( $operand.text != null ) {
+			statement += " " + $operand.text;
+		}
+		int n = $rt.line;
+		writer.writeContent( "Statement: " + statement + " on line " + n );
+	}
 	;
 sequenceInst
-	: 'sequence'
+	: sq='sequence'
+	{
+		writer.writeContent( "Statement: sequence on line " + $sq.line );
+	}
 	;
 expression
 	: operand binOper operand

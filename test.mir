@@ -1,0 +1,15 @@
+insert_node:
+begin
+receive n(val)
+receive l(val)
+t1 <- l*.value
+if n <= t1 goto L1
+t2 <- l*.next
+if t2 != nil goto L2
+call make_node, ( l, type1; n, int )
+return
+L2: t4 <- l*.next
+call insert_node, ( n, int; t4, type1 )
+return
+L1: return
+end

@@ -28,6 +28,11 @@ public class Node implements Serializable {
 		this.details = new ArrayList<>();
 		this.cfsTrue = null;
 		this.cfsFalse = null;
+		if( this.statementType == Node.GOTO_INST ) {
+			processTarget();
+		} else if( this.statementType == Node.IF_INST ) {
+			processIfTarget();
+		}
 	}
 
 	public String getStatement() {
@@ -123,10 +128,31 @@ public class Node implements Serializable {
 		}
 		return null;
 	}
+	
+	public void processTarget() {
+		String stmt = getStatement();
+		String[] components = stmt.split( " " );
+		this.addInformation( new Information( "TARGET", components[1] ) );
+	}
+	
+	public void processIfTarget() {
+		String stmt = getStatement();
+		String[] components = stmt.split( " " );
+		this.addInformation( new Information( "TARGET", components[components.length - 1] ) );
+	}
+	
+	public String getTarget() {
+		for( Information info : details ) {
+			if( info.getInfoName().equals( "TARGET" ) ) {
+				return info.getInfoValue();
+			}
+		}
+		return "";
+	}
 }
 
 class Information implements Serializable {
-	
+
 	private static final long serialVersionUID = -2242398008897200660L;
 	
 	private String infoName;

@@ -2,12 +2,15 @@ grammar MIR;
 program
 	: (jumpLabel ':')? progUnit*
 	;
+
 progUnit
 	: (jumpLabel ':')? 'begin' mirInsts 'end'
 	;
+
 mirInsts
 	: ((jumpLabel ':')? mirInst Comment?)*
 	;
+
 mirInst
 	: receiveInst
 	| assignInst
@@ -18,48 +21,61 @@ mirInst
 	| sequenceInst
 	| jumpLabel ':' mirInst
 	;
+
 receiveInst
 	: 'receive' varName '(' paramType ')'
 	;
+
 assignInst
 	: varName '<-' expression
 	| varName '<-' '(' varName ')' operand
 	| ('*')? varName ('.' eltName)? '<-' operand
 	;
+
 gotoInst
 	: 'goto' jumpLabel
 	;
+
 ifInst
 	: 'if' relExpr ('goto' jumpLabel | 'trap' Integer )
 	;
+
 callInst
 	: ('call' | varName '<-') procName ',' argsList
 	;
+
 argsList
 	: '(' argList (';' argList)* ')'
 	;
+
 argList
 	: operand ',' typeName
 	;
+
 returnInst
 	: 'return' operand?
 	;
+
 sequenceInst
 	: 'sequence'
 	;
+
 expression
 	: operand binOper operand
 	| unaryOper operand
 	| operand
 	;
+
 relExpr
 	: operand relOper operand
 	| ('!')? operand
 	;
+
 operand
 	: varName
 	| Const
 	;
+
 binOper
 	: '+' 
 	| '-' 
@@ -78,6 +94,7 @@ binOper
 	| '.' 
 	| '*.'
 	;
+
 relOper
 	: '=' 
 	| '!=' 
@@ -86,6 +103,7 @@ relOper
 	| '>' 
 	| '>='
 	;
+
 unaryOper
 	: '-' 
 	| '!' 
@@ -93,23 +111,7 @@ unaryOper
 	| '(' typeName ')' 
 	| '*'
 	;
-Const
-	: Integer 
-	| FloatNumber 
-	| Boolean
-	;
-Integer
-	: '0' 
-	| ('-')? NZDecDigit DecDigit* 
-	| '0x' HexDigit+
-	;
-FloatNumber
-	: ('-')? DecDigit+ '.' DecDigit+ ('E' ('-')? DecDigit+)? ('D')?
-	;
-Boolean
-	: 'true' 
-	| 'false'
-	;
+
 jumpLabel
 	: Identifier
 	;
@@ -128,13 +130,88 @@ paramType
 	| 'valres' 
 	| 'ref'
 	;
-Identifier
-	: Letter (Letter | DecDigit | '_')*
-	;
 typeName
 	: 'int' 
 	| 'char' 
 	| Identifier
+	;
+
+
+//LEXER
+
+//KEYWORDS
+BEGIN: 'begin';
+END: 'end';
+RECEIVE: 'receive';
+IF: 'if';
+GOTO: 'goto';
+TRAP: 'trap';
+CALL: 'call';
+RETURN: 'return';
+SEQUENCE: 'sequence';
+VAL: 'val';
+RES: 'res';
+VALRES: 'valres';
+REF: 'ref';
+INT: 'int';
+CHAR: 'char';
+
+//OPERATORS
+COLON: ':';
+COMMENT: '||';
+DOT: '.';
+STARDOT: '*.';
+COMMA: ',';
+SEMI: ';';
+ASSIGN: '<-';
+PLUS: '+';
+MINUS: '-';
+ASTERISK: '*';
+FSLASH: '/';
+MOD: 'mod';
+MIN: 'min';
+MAX: 'max';
+LPAREN: '(';
+RPAREN: ')';
+EQUALS: '=';
+NOTEQUALS: '!=';
+GREATER: '>';
+LESS: '<';
+GREATEREQ: '>=';
+LESSEQ: '<=';
+NOT: '!';
+ADDR: 'addr';
+AND: 'and';
+OR: 'or';
+XOR: 'xor';
+SHL: 'shl';
+SHR: 'shr';
+SHRA: 'shra';
+
+
+Const
+	: Integer 
+	| FloatNumber 
+	| Boolean
+	;
+
+Integer
+	: '0' 
+	| ('-')? NZDecDigit DecDigit* 
+	| '0x' HexDigit+
+	;
+
+FloatNumber
+	: ('-')? DecDigit+ '.' DecDigit+ ('E' ('-')? DecDigit+)? ('D')?
+	;
+
+Boolean
+	: 'true' 
+	| 'false'
+	;
+
+Identifier
+	: Letter (Letter | DecDigit | '_')*
 	;
 Whitespace
 	: [ \t]+ 

@@ -188,19 +188,22 @@ expression
 	| unaryOper operand
 	| operand
 	;
+
 relExpr
 	: operand relOper operand
 	| ('!')? operand
 	;
+
 operand
 	: varName
 	| Const
 	;
+
 binOper
-	: '+'
-	| '-'
-	| '*'
-	| '/'
+	: '+' 
+	| '-' 
+	| '*' 
+	| '/' 
 	| 'mod' 
 	| 'min' 
 	| 'max'
@@ -214,6 +217,7 @@ binOper
 	| '.' 
 	| '*.'
 	;
+
 relOper
 	: '=' 
 	| '!=' 
@@ -222,6 +226,7 @@ relOper
 	| '>' 
 	| '>='
 	;
+
 unaryOper
 	: '-' 
 	| '!' 
@@ -229,6 +234,7 @@ unaryOper
 	| '(' typeName ')' 
 	| '*'
 	;
+
 jumpLabel
 	: Identifier
 	;
@@ -252,38 +258,97 @@ typeName
 	| 'char' 
 	| Identifier
 	;
-Identifier
-	: Letter (Letter | DecDigit | '_')*
-	;
+
+
+//LEXER
+
+//KEYWORDS
+BEGIN: 'begin';
+END: 'end';
+RECEIVE: 'receive';
+IF: 'if';
+GOTO: 'goto';
+TRAP: 'trap';
+CALL: 'call';
+RETURN: 'return';
+SEQUENCE: 'sequence';
+VAL: 'val';
+RES: 'res';
+VALRES: 'valres';
+REF: 'ref';
+INT: 'int';
+CHAR: 'char';
+
+//OPERATORS
+COLON: ':';
+COMMENT: '||';
+DOT: '.';
+STARDOT: '*.';
+COMMA: ',';
+SEMI: ';';
+ASSIGN: '<-';
+PLUS: '+';
+MINUS: '-';
+ASTERISK: '*';
+FSLASH: '/';
+MOD: 'mod';
+MIN: 'min';
+MAX: 'max';
+LPAREN: '(';
+RPAREN: ')';
+EQUALS: '=';
+NOTEQUALS: '!=';
+GREATER: '>';
+LESS: '<';
+GREATEREQ: '>=';
+LESSEQ: '<=';
+NOT: '!';
+ADDR: 'addr';
+AND: 'and';
+OR: 'or';
+XOR: 'xor';
+SHL: 'shl';
+SHR: 'shr';
+SHRA: 'shra';
+
+
 Const
 	: Integer 
 	| FloatNumber 
 	| Boolean
 	;
+
 Integer
 	: '0' 
 	| ('-')? NZDecDigit DecDigit* 
 	| '0x' HexDigit+
 	;
+
 FloatNumber
 	: ('-')? DecDigit+ '.' DecDigit+ ('E' ('-')? DecDigit+)? ('D')?
 	;
+
 Boolean
 	: 'true' 
 	| 'false'
 	;
+
+Identifier
+	: Letter (Letter | DecDigit | '_')*
+	;
 Whitespace
 	: [ \t]+ 
-	-> skip
+	-> channel(HIDDEN)
 	;
 NewLine
 	: ('\r' '\n'? | '\n') 
-	-> skip 
+	-> channel(HIDDEN) 
 	;
 Comment
 	: '||' ~[\n\r]* 
 	-> skip
 	;
+
 fragment
 Letter: [a-zA-Z];
 

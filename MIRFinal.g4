@@ -172,6 +172,7 @@ returnInst
 		}
 		int n = $rt.line;
 		Node node = new Node( statement, Node.RETURN_INST, label, n );
+		nodes.add( node );
 		writer.writeContent( "Statement: " + statement + " on line " + n );
 	}
 	;
@@ -179,6 +180,7 @@ sequenceInst
 	: sq='sequence'
 	{
 		Node node = new Node( "sequence", Node.SEQUENCE_INST, label, $sq.line );
+		nodes.add( node );
 		writer.writeContent( "Statement: sequence on line " + $sq.line );
 	}
 	;
